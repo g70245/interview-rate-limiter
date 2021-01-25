@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"strconv"
 	"testing"
 	"time"
 )
@@ -56,6 +57,13 @@ func TestPrune(t *testing.T) {
 		t.Error("Should delete the ip tracker that has not been active in 60 seconds")
 	} else if tracker != &tracker2 {
 		t.Error("Should be the same object")
+	}
+}
+func BenchmarkLimiterMemoryConsumptionWithFullTrackers(b *testing.B) {
+	for i := 0; i < 6000; i++ {
+		tracker := CreateIPTracker("127.0.0."+strconv.Itoa(i), time.Now().Unix())
+		limiter := CreateRateLimiter()
+		limiter.AddIPTracker(&tracker)
 	}
 }
 
